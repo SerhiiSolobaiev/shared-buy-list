@@ -38,7 +38,6 @@ public class Main extends ActionBarActivity{
             }
         };
         buttonAdd.setOnClickListener(add);
-        Log.v(TAG," before update_list()");
         update_list();
     }
     private void add_purchase(){

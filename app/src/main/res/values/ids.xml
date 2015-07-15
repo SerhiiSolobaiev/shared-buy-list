@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="edit1_id" type="id"/>
+    <item name="edit2_id" type="id"/>
+    <item name="edit3_id" type="id"/>
+    <item name="row_id" type="id"/>
+    <item name="table_id" type="id"/>
+</resources>

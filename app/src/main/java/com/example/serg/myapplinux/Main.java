@@ -1,6 +1,8 @@
 package com.example.serg.myapplinux;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -39,6 +42,8 @@ public class Main extends ActionBarActivity{
         };
         buttonAdd.setOnClickListener(add);
         update_list();
+        delete_record();
+        //long_clicked_on_item();
     }
     private void add_purchase(){
         final EditText name_add = (EditText) findViewById(R.id.name_add);
@@ -93,8 +98,8 @@ public class Main extends ActionBarActivity{
         Cursor c = db.query(DBHelper.TABLE_NAME, new String[] {DBHelper.ID_key, DBHelper.NAME,
                 DBHelper.AMOUNT, DBHelper.PRICE, DBHelper.DATE_TIME},
                 null, null, null, null, null);
-        String[] from = new String[] {DBHelper.ID_key, DBHelper.NAME, DBHelper.AMOUNT, DBHelper.PRICE,
-                DBHelper.DATE_TIME};
+        String[] from = new String[] {DBHelper.ID_key, DBHelper.NAME, DBHelper.AMOUNT,
+                DBHelper.PRICE,DBHelper.DATE_TIME};
         int[] to = new int[] {R.id.n_in_list, R.id.name_custom,R.id.number_custom,R.id.price_custom,
                 R.id.date_custom};
         SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
@@ -103,9 +108,71 @@ public class Main extends ActionBarActivity{
                 to,
                 0
         );
-        Log.v(TAG, " after SimpleCursorAdapter listAdapter = new");
         list = (ListView) findViewById(R.id.listView);
         list.setAdapter(listAdapter);
+        Log.v(TAG, "list updated");
+    }
+
+    private void delete_record(){
+        dbHelper = new DBHelper(this);
+        list = (ListView) findViewById(R.id.listView);
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                /*LinearLayout ll = (LinearLayout) view;
+                TextView name_long_clicked = (TextView) ll.findViewById(R.id.name_custom);
+                String query = String.format("DELETE FROM %s WHERE %s = '%s'",
+                        DBHelper.TABLE_NAME,
+                        DBHelper.NAME,
+                        name_long_clicked.getText().toString());
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                db.execSQL(query);
+                //Toast.makeText(getApplicationContext(), R.string.deleted, Toast.LENGTH_SHORT).show();
+                */
+                //long_clicked_on_item();
+                final CharSequence list_actions[] = {String.valueOf(R.string.action_delete),
+                        String.valueOf(R.string.action_edit)};
+                AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
+                builder.setTitle(R.string.action_title)
+                        .setItems(list_actions, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                                Toast.makeText(getApplicationContext(), "Good!!!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                //builder.create();
+                builder.show();
+                return true;
+            }
+        });
+        update_list();
+    }
+    private void long_clicked_on_item(){
+
+        final CharSequence list_actions[] = {String.valueOf(R.string.action_delete),
+                String.valueOf(R.string.action_edit)};
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(R.string.action_title);
+        adb.setSingleChoiceItems(list_actions,-1,new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+
+                Toast.makeText(getApplicationContext(),
+                        "You Choose : "+ list_actions[arg1],
+                        Toast.LENGTH_LONG).show();
+            }});
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                Toast.makeText(getApplicationContext(),
+                        "You Have Cancel the Dialog box", Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+        adb.create();
     }
     private String get_current_date_time(){
         Calendar c = Calendar.getInstance();

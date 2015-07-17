@@ -14,7 +14,10 @@
     <string name="number_in_list">Medium Text</string>
     <string name="price_in_list">Medium Text</string>
     <string name="date_in_list">Small Text</string>
+    <string name="deleted">Deleted!</string>
     <string name="not_entered">Please, enter the name!</string>
-
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_title">What do you like?</string>
 
     </resources>

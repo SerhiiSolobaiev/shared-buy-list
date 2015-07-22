@@ -1,23 +1,27 @@
     <resources>
-    <string name="app_name">MyAppLinux</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="name_title">Name</string>
-    <string name="number_title">Number</string>
-    <string name="price_title">Price</string>
-    <string name="total">Total = </string>
-    <string name="add">+</string>
-    <string name="name_add">Milk</string>
-    <string name="number_add">2l</string>
-    <string name="price_add">10</string>
-    <string name="name_in_list">Medium Text</string>
-    <string name="number_in_list">Medium Text</string>
-    <string name="price_in_list">Medium Text</string>
-    <string name="date_in_list">Small Text</string>
-    <string name="deleted">Deleted!</string>
-    <string name="not_entered">Please, enter the name!</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_title">What do you like?</string>
-
+        <string name="app_name">MyAppLinux</string>
+        <string name="hello_world">Hello world!</string>
+        <string name="action_settings">Settings</string>
+        <string name="name_title">Name</string>
+        <string name="number_title">Number</string>
+        <string name="price_title">Price</string>
+        <string name="total">Total = </string>
+        <string name="add">+</string>
+        <string name="name_add">Milk</string>
+        <string name="number_add">2l</string>
+        <string name="price_add">10</string>
+        <string name="name_in_list">Name</string>
+        <string name="number_in_list">Number</string>
+        <string name="price_in_list">Price</string>
+        <string name="date_in_list">dd MMMM  HH:mm</string>
+        <string name="deleted">Deleted!</string>
+        <string name="not_entered">Please, enter the name!</string>
+        <string name="action_delete">Delete</string>
+        <string name="action_edit">Edit</string>
+        <string name="action_title">What do you like?</string>
+        <string name="number_custom_title">Number:</string>
+        <string name="price_custom_title">Price:</string>
+        <string name="total_sum">Total = </string>
+        <string name="okey">Ok</string>
+        <string name="cancel">Cancel</string>
     </resources>

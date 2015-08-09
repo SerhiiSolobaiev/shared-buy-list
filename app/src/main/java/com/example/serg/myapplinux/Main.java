@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ public class Main extends ActionBarActivity{
             }
         };
         buttonAdd.setOnClickListener(add);
-        update_list();
+        //update_list();
         long_clicked_on_item();
     }
     private void add_purchase(){
@@ -67,7 +68,11 @@ public class Main extends ActionBarActivity{
             cv.put(DBHelper.AMOUNT, number_add_string);
             cv.put(DBHelper.PRICE, price_add_string);
             cv.put(DBHelper.DATE_TIME, date_time);
-            db.insert(DBHelper.TABLE_NAME, null, cv);
+            int exception = (int) db.insertWithOnConflict(DBHelper.TABLE_NAME, null, cv,
+                    SQLiteDatabase.CONFLICT_IGNORE);
+            if (exception == -1)
+                Toast.makeText(getApplicationContext(),name_add_string +" "+ getText(R.string.already_exists),
+                        Toast.LENGTH_SHORT).show();
             Log.v(TAG, " db.insert(DBHelper.TABLE_NAME, null, cv);");
 
             /*int maxLength = 10;
@@ -87,27 +92,37 @@ public class Main extends ActionBarActivity{
     private void update_list(){
         dbHelper = new DBHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.query(DBHelper.TABLE_NAME, null,
-                null, null, null, null, null);
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, null);
         String[] from = new String[] {DBHelper.NAME, DBHelper.AMOUNT,
-                DBHelper.PRICE,DBHelper.DATE_TIME};
+                DBHelper.PRICE,DBHelper.DATE_TIME,DBHelper.BOUGHT};
         int[] to = new int[] {R.id.name_custom,R.id.number_custom,R.id.price_custom,
-                R.id.date_custom};
+                R.id.date_custom,R.id.check_bought_custom};
         SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
                 this, R.layout.custom_list, c,
                 from,
                 to,
                 0
         );
+        listAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                Log.v(TAG,"columnIndex = "+columnIndex+" and view = "+view.toString());
+                if(columnIndex==4){
+                    CheckBox cb = (CheckBox) view;
+                    cb.setChecked(cursor.getInt(4) > 0);
+                    return true;
+                }
+                return false;
+            }
+        });
         list = (ListView) findViewById(R.id.listView);
         list.setAdapter(listAdapter);
         Log.v(TAG, "list updated");
         calculate_sum();
     }
 
-
     private void long_clicked_on_item(){
-        dbHelper = new DBHelper(this);
+        //dbHelper = new DBHelper(this);
         list = (ListView) findViewById(R.id.listView);
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -125,8 +140,6 @@ public class Main extends ActionBarActivity{
                                 if (which == 0) {
                                     delete_record(name_long_clicked.getText().toString());
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Must be edit function",
-                                            Toast.LENGTH_SHORT).show();
                                     edit_purchase(name_long_clicked.getText().toString(),
                                             number_long_clicked.getText().toString(),
                                             price_long_clicked.getText().toString());
@@ -161,8 +174,8 @@ public class Main extends ActionBarActivity{
             }
         }
         if (sum != 0) {
-            String total_sum = getResources().getString(R.string.total_sum);
-            text_sum.setText(String.format(total_sum + " %.2f", sum));
+            //String total_sum = getResources().getString(R.string.total_sum);
+            text_sum.setText(String.format(getText(R.string.total_sum) + " %.2f", sum));
         }else text_sum.setText("");
     }
 
@@ -185,11 +198,6 @@ public class Main extends ActionBarActivity{
                 .setPositiveButton(R.string.okey,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // get user input and set it to result
-                                // edit text
-                                //result.setText(userInput.getText());
-                                Toast.makeText(getApplicationContext(), "Must be writing to bd and update_list",
-                                        Toast.LENGTH_SHORT).show();
                                 save_edit_purchase(id_purchase,name_in_alert.getText().toString(),
                                         number_in_alert.getText().toString(),
                                         price_in_alert.getText().toString());
@@ -197,7 +205,7 @@ public class Main extends ActionBarActivity{
                         })
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         });
@@ -229,7 +237,6 @@ public class Main extends ActionBarActivity{
         update_list();
         /*
         * Добавить сохранение состояний checkbox
-        * Добавить редактирование
         * Внешний вид
         * ОБЩИЙ СПИСОК ПОКУПОК(peer to peer)
         * */
@@ -251,14 +258,34 @@ public class Main extends ActionBarActivity{
         return id;
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    public void bought_the_purchase(View view){
+        View v = (View) view.getParent();
+        TextView name = (TextView)v.findViewById(R.id.name_custom);
+        CheckBox c = (CheckBox)v.findViewById(R.id.check_bought_custom);
+        dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        if (c.isChecked()) {
+            cv.put(DBHelper.BOUGHT, 1);
+            Toast.makeText(getApplicationContext(), "Checked on name " + name.getText().toString(),
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            cv.put(DBHelper.BOUGHT, 0);
+            Toast.makeText(getApplicationContext(),"UNChecked on name "+name.getText().toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+        db.update(DBHelper.TABLE_NAME, cv, DBHelper.NAME +" = '"+name.getText().toString()+"'",null);
+        Log.v(TAG, " db.update(DBHelper.TABLE_NAME,cv, DBHelper.NAME = "+name.getText().toString());
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

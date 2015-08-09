@@ -22,10 +22,11 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ING_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "("
-                + ID_key + " INTEGER PRIMARY KEY AUTOINCREMENT," + NAME + " TEXT,"
+                + ID_key + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + NAME + " TEXT UNIQUE,"
                 + PRICE + " REAL,"
                 + DATE_TIME + " TEXT,"
-                + BOUGHT + " TEXT,"
+                + BOUGHT + " INTEGER DEFAULT 0,"
                 + AMOUNT + " REAL" + ")";
         db.execSQL(CREATE_ING_TABLE);
     }
@@ -36,3 +37,21 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 }
+/*
+Log.v("check_bought","clicked on position"+position);
+        LinearLayout ll = (LinearLayout) view;
+final TextView name_long_clicked = (TextView) ll.findViewById(R.id.name_custom);
+final CheckBox c = (CheckBox)ll.findViewById(R.id.checkBox_bought_custom);
+        Toast.makeText(getApplicationContext(), "Clicked on name "/* + name_long_clicked.getText()
+        , Toast.LENGTH_SHORT).show();
+        Log.v("check_bought", "after Toast.makeText");
+                /*c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Log.v("check_bought", "Checked on name"+ name_long_clicked.getText());
+                            Toast.makeText(getApplicationContext(), "Checked on name " /*+ name_long_clicked.getText()
+                                    , Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });*/
